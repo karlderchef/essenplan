@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mein Wochenplaner</title>
+    <!-- Tailwind CSS CDN für einfaches Design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .meal-input, .recipe-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .meal-input:focus, .recipe-select:focus {
+            border-color: #3b82f6;
+        }
+        .meal-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <h1 class="text-4xl font-extrabold text-gray-800 text-center mb-6">Mein Wochen-Essensplan</h1>
+        <p class="text-gray-600 text-center mb-10">
+            Tragen Sie für jeden Tag der Woche Ihre Mahlzeiten ein oder wählen Sie ein passendes Rezept aus.
+        </p>
+
+        <!-- Essensplan-Sektion -->
+        <div class="bg-green-50 p-6 rounded-lg mb-8 shadow-sm">
+            <h2 class="text-2xl font-bold text-green-800 mb-4">Essensplan für die Woche</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-green-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 rounded-tl-lg">Tag</th>
+                            <th scope="col" class="px-6 py-3">Frühstück</th>
+                            <th scope="col" class="px-6 py-3">Mittagessen</th>
+                            <th scope="col" class="px-6 py-3 rounded-tr-lg">Abendessen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Interaktive Eingabefelder mit Dropdown für den Essensplan -->
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Montag</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="mo-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('mo-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="mo-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('mo-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+                                    <option value="Linsensuppe">Linsensuppe</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="mo-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('mo-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Zucchini-Boote mit Hackfleisch">Zucchini-Boote mit Hackfleisch</option>
+                                    <option value="Putenschnitzel mit Salat">Putenschnitzel mit Salat</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Dienstag</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="di-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('di-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="di-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('di-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="di-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('di-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Lachs mit Gemüse">Lachs mit Gemüse</option>
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Mittwoch</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="mi-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('mi-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="mi-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('mi-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Linsensuppe">Linsensuppe</option>
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="mi-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('mi-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Putenschnitzel mit Salat">Putenschnitzel mit Salat</option>
+                                    <option value="Zucchini-Boote mit Hackfleisch">Zucchini-Boote mit Hackfleisch</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Donnerstag</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="do-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('do-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="do-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('do-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+                                    <option value="Linsensuppe">Linsensuppe</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="do-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('do-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+                                    <option value="Lachs mit Gemüse">Lachs mit Gemüse</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Freitag</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="fr-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('fr-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="fr-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('fr-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+                                    <option value="Linsensuppe">Linsensuppe</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="fr-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('fr-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Lachs mit Gemüse">Lachs mit Gemüse</option>
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Samstag</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="sa-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('sa-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="sa-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('sa-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="sa-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('sa-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Zucchini-Boote mit Hackfleisch">Zucchini-Boote mit Hackfleisch</option>
+                                    <option value="Putenschnitzel mit Salat">Putenschnitzel mit Salat</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Sonntag</td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="so-f" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('so-f', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="so-m" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('so-m', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Linsensuppe">Linsensuppe</option>
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 meal-cell">
+                                <input type="text" id="so-a" placeholder="Eigene Mahlzeit" class="meal-input">
+                                <select onchange="setMealFromRecipe('so-a', this.value)" class="recipe-select text-gray-500">
+                                    <option value="" disabled selected>Rezept wählen</option>
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+                                    <option value="Lachs mit Gemüse">Lachs mit Gemüse</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mt-4 text-center">
+                    <button id="save-plan-btn" class="bg-green-600 text-white font-medium px-6 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200">
+                        Plan speichern
+                    </button>
+                    <p id="save-message" class="text-sm mt-2 text-green-700 hidden">Plan gespeichert!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funktion, um das ausgewählte Rezept in das Eingabefeld einzufügen
+        function setMealFromRecipe(inputId, recipeName) {
+            document.getElementById(inputId).value = recipeName;
+        }
+
+        // Event-Listener für den Speichern-Button
+        document.getElementById('save-plan-btn').addEventListener('click', () => {
+            const saveMessage = document.getElementById('save-message');
+            
+            // Beispiel: Ausgabe der Daten in der Konsole
+            const mealPlan = {};
+            const days = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
+            const meals = ['f', 'm', 'a']; // f=Frühstück, m=Mittagessen, a=Abendessen
+            
+            days.forEach(day => {
+                mealPlan[day] = {};
+                meals.forEach(meal => {
+                    const id = `${day}-${meal}`;
+                    const value = document.getElementById(id).value;
+                    mealPlan[day][meal] = value;
+                });
+            });
+            console.log('Gespeicherter Essensplan:', mealPlan);
+
+            // Meldung anzeigen, dass der Plan gespeichert wurde
+            saveMessage.classList.remove('hidden');
+            setTimeout(() => {
+                saveMessage.classList.add('hidden');
+            }, 3000); // Nachricht nach 3 Sekunden ausblenden
+        });
+    </script>
+</body>
+</html>
