@@ -1,351 +1,683 @@
 <!DOCTYPE html>
+
 <html lang="de">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mein Wochenplaner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .recipe-dropdown {
-            max-height: 240px;
-            overflow-y: auto;
-        }
-    </style>
-    <!-- Firebase SDKs -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mein Wochenplaner</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        body { font-family: 'Inter', sans-serif; }
+
+        .meal-input, .recipe-select {
+
+            width: 100%;
+
+            padding: 8px;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 6px;
+
+            outline: none;
+
+            transition: border-color 0.2s;
+
+        }
+
+        .meal-input:focus, .recipe-select:focus {
+
+            border-color: #3b82f6;
+
+        }
+
+        .meal-cell {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+
+        }
+
+    </style>
+
 </head>
-<body class="bg-gray-100 p-4 sm:p-8 flex items-center justify-center min-h-screen">
-    <div class="w-full max-w-xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 text-center mb-4 sm:mb-6">Mein Wochen-Essensplan</h1>
-        <p class="text-sm sm:text-base text-gray-600 text-center mb-6 sm:mb-10">
-            Klicken Sie auf ein Feld, um Rezeptideen zu sehen. Ihre Eingaben werden automatisch gespeichert.
-        </p>
 
-        <div class="bg-green-50 p-4 sm:p-6 rounded-lg mb-8 shadow-sm">
-            <h2 class="text-xl sm:text-2xl font-bold text-green-800 mb-4">Essensplan für die Woche</h2>
-            
-            <div id="meal-plan-container" class="space-y-6">
-                <!-- Montag -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Montag</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="mo-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="mo-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="mo-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
+<body class="bg-gray-100 p-8 flex items-center justify-center min-h-screen">
 
-                <!-- Dienstag -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Dienstag</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="di-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="di-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="di-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
+    <div class="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
 
-                <!-- Mittwoch -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Mittwoch</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="mi-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="mi-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="mi-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
+        <h1 class="text-4xl font-extrabold text-gray-800 text-center mb-6">Mein Wochen-Essensplan</h1>
 
-                <!-- Donnerstag -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Donnerstag</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="do-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="do-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="do-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
+        <p class="text-gray-600 text-center mb-10">
 
-                <!-- Freitag -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Freitag</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="fr-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="fr-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="fr-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
+            Tragen Sie für jeden Tag der Woche Ihre Mahlzeiten ein oder wählen Sie ein passendes Rezept aus.
 
-                <!-- Samstag -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Samstag</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="sa-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="sa-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="sa-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
+        </p>
 
-                <!-- Sonntag -->
-                <div class="p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 mb-2">Sonntag</div>
-                    <div class="space-y-2">
-                        <div class="relative">
-                            <input type="text" id="so-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="so-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="so-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <p id="status-message" class="text-sm mt-4 text-center text-gray-500"></p>
-    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Globale Variablen für Firebase und UI-Elemente
-        let app, db, auth;
-        const statusMessage = document.getElementById('status-message');
-        const inputs = document.querySelectorAll('input[type="text"]');
-        
-        // Globale Variablen aus der Canvas-Umgebung
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        <div class="bg-green-50 p-6 rounded-lg mb-8 shadow-sm">
 
-        // Rezeptideen basierend auf den Vorlieben des Benutzers
-        const sampleRecipes = {
-            'Frühstück': [
-                'Haferflocken mit Beeren',
-                'Rührei mit Spinat und Tomaten',
-                'Griechischer Joghurt mit Nüssen',
-                'Vollkornbrot mit fettarmem Frischkäse'
-            ],
-            'Mittagessen': [
-                'Hähnchenbrust mit Quinoa und Brokkoli',
-                'Linsensalat mit Feta-Käse',
-                'Chili sin Carne',
-                'Gemüse-Wraps mit Hummus'
-            ],
-            'Abendessen': [
-                'Gemüsesuppe mit Vollkornbrot',
-                'Großer Salat mit gebratenem Tofu',
-                'Omelett mit Gemüse',
-                'Frikadellen mit Blumenkohlpüree'
-            ]
-        };
+            <h2 class="text-2xl font-bold text-green-800 mb-4">Essensplan für die Woche</h2>
 
-        // UI-Statusmeldungen anzeigen
-        const setStatus = (message, color) => {
-            statusMessage.textContent = message;
-            statusMessage.style.color = color;
-        };
+            <div class="overflow-x-auto">
 
-        // Funktion zum Ausblenden aller Dropdown-Menüs
-        const hideAllDropdowns = () => {
-            document.querySelectorAll('.recipe-dropdown').forEach(dropdown => {
-                dropdown.remove();
-            });
-        };
+                <table class="w-full text-sm text-left text-gray-500">
 
-        /**
-         * Initialisiert Firebase und wartet auf Authentifizierung, um Daten zu laden.
-         */
-        const initFirebase = async () => {
-            setStatus('Lade gespeicherte Daten...', '#4A5568');
-            try {
-                if (Object.keys(firebaseConfig).length > 0) {
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-                    
-                    // onAuthStateChanged stellt sicher, dass wir eine gültige Benutzer-ID haben
-                    onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            await loadMealPlan(user.uid);
-                            setStatus('Daten geladen. Ihre Eingaben werden automatisch gespeichert.', '#4A5568');
-                        } else {
-                            setStatus('Daten konnten nicht geladen werden. Bitte melden Sie sich erneut an.', '#E53E3E');
-                        }
-                    });
+                    <thead class="text-xs text-gray-700 uppercase bg-green-100">
 
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } else {
-                    setStatus('Firebase-Konfiguration nicht gefunden. Speichern ist nicht möglich.', '#E53E3E');
-                }
-            } catch (error) {
-                console.error("Schwerwiegender Fehler beim Initialisieren von Firebase:", error);
-                setStatus('Fehler beim Initialisieren des Speicherdienstes.', '#E53E3E');
-            }
-        };
+                        <tr>
 
-        /**
-         * Speichert den gesamten Essensplan in Firestore.
-         */
-        const saveMealPlan = async () => {
-            if (!db || !auth || !auth.currentUser) {
-                console.error("Datenbank oder Benutzer nicht verfügbar. Speicherung abgebrochen.");
-                return;
-            }
-            const userId = auth.currentUser.uid;
-            const collectionPath = `artifacts/${appId}/users/${userId}/mealPlans`;
-            const mealPlan = {};
-            inputs.forEach(input => {
-                mealPlan[input.id] = input.value;
-            });
+                            <th scope="col" class="px-6 py-3 rounded-tl-lg">Tag</th>
 
-            setStatus('Speichert...', '#38A169');
-            try {
-                await setDoc(doc(db, collectionPath, 'current-plan'), mealPlan);
-                setStatus('Gespeichert!', '#38A169');
-            } catch (e) {
-                console.error("Fehler beim Speichern des Plans:", e);
-                setStatus('Speicherfehler!', '#E53E3E');
-            }
-        };
+                            <th scope="col" class="px-6 py-3">Frühstück</th>
 
-        /**
-         * Lädt den Essensplan aus Firestore.
-         */
-        const loadMealPlan = async (userId) => {
-            if (!db || !userId) {
-                return;
-            }
-            const collectionPath = `artifacts/${appId}/users/${userId}/mealPlans`;
-            try {
-                const docRef = doc(db, collectionPath, 'current-plan');
-                const docSnap = await getDoc(docRef);
+                            <th scope="col" class="px-6 py-3">Mittagessen</th>
 
-                if (docSnap.exists()) {
-                    const mealPlan = docSnap.data();
-                    inputs.forEach(input => {
-                        if (mealPlan[input.id] !== undefined) {
-                            input.value = mealPlan[input.id];
-                        }
-                    });
-                }
-            } catch (e) {
-                console.error("Fehler beim Laden des Plans:", e);
-            }
-        };
+                            <th scope="col" class="px-6 py-3 rounded-tr-lg">Abendessen</th>
 
-        // Event-Listener für Dropdown-Funktionalität und automatische Speicherung
-        inputs.forEach(input => {
-            // Dropdown-Funktionalität
-            input.addEventListener('focus', (event) => {
-                event.stopPropagation();
-                hideAllDropdowns();
-                
-                const mealType = input.placeholder;
-                const recipes = sampleRecipes[mealType];
+                        </tr>
 
-                if (recipes && recipes.length > 0) {
-                    const dropdown = document.createElement('ul');
-                    dropdown.classList.add(
-                        'recipe-dropdown', 
-                        'absolute', 
-                        'mt-2', 
-                        'w-full', 
-                        'bg-white', 
-                        'border', 
-                        'border-gray-300', 
-                        'rounded-lg', 
-                        'shadow-lg', 
-                        'z-10',
-                        'max-h-60',
-                        'overflow-y-auto'
-                    );
-                    
-                    recipes.forEach(recipe => {
-                        const li = document.createElement('li');
-                        li.textContent = recipe;
-                        li.classList.add(
-                            'px-4', 
-                            'py-2', 
-                            'cursor-pointer', 
-                            'hover:bg-green-100', 
-                            'transition-colors', 
-                            'duration-200'
-                        );
-                        
-                        li.addEventListener('click', () => {
-                            input.value = recipe;
-                            hideAllDropdowns();
-                            saveMealPlan();
-                        });
-                        
-                        dropdown.appendChild(li);
-                    });
-                    
-                    input.parentElement.appendChild(dropdown);
-                }
-            });
+                    </thead>
 
-            // Automatische Speicherung bei Eingabe
-            input.addEventListener('input', () => {
-                saveMealPlan();
-            });
-        });
+                    <tbody>
 
-        // Klick-Event-Listener zum Ausblenden des Dropdown-Menüs bei Klick außerhalb
-        document.addEventListener('click', (event) => {
-            if (!event.target.closest('.recipe-dropdown') && !event.target.closest('input')) {
-                hideAllDropdowns();
-            }
-        });
+                        <tr class="bg-white border-b hover:bg-gray-50">
 
-        // Initialisierung beim Laden der Seite
-        document.addEventListener('DOMContentLoaded', initFirebase);
-    </script>
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Montag</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="mo-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('mo-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="mo-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('mo-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+
+                                    <option value="Linsensuppe">Linsensuppe</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="mo-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('mo-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Zucchini-Boote mit Hackfleisch">Zucchini-Boote mit Hackfleisch</option>
+
+                                    <option value="Putenschnitzel mit Salat">Putenschnitzel mit Salat</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="bg-white border-b hover:bg-gray-50">
+
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Dienstag</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="di-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('di-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="di-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('di-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="di-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('di-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Geflügel mit Gemüse">Geflügel mit Gemüse</option>
+
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="bg-white border-b hover:bg-gray-50">
+
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Mittwoch</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="mi-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('mi-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="mi-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('mi-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Linsensuppe">Linsensuppe</option>
+
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="mi-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('mi-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Putenschnitzel mit Salat">Putenschnitzel mit Salat</option>
+
+                                    <option value="Zucchini-Boote mit Hackfleisch">Zucchini-Boote mit Hackfleisch</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="bg-white border-b hover:bg-gray-50">
+
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Donnerstag</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="do-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('do-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="do-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('do-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+
+                                    <option value="Linsensuppe">Linsensuppe</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="do-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('do-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+
+                                    <option value="Geflügel mit Gemüse">Geflügel mit Gemüse</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="bg-white border-b hover:bg-gray-50">
+
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Freitag</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="fr-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('fr-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="fr-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('fr-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+
+                                    <option value="Linsensuppe">Linsensuppe</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="fr-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('fr-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Geflügel mit Gemüse">Geflügel mit Gemüse</option>
+
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="bg-white border-b hover:bg-gray-50">
+
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Samstag</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="sa-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('sa-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+
+                                    <option value="Haferflocken mit Beeren">Haferflocken mit Beeren</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="sa-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('sa-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+
+                                    <option value="Vollkornsandwich mit Käse">Vollkornsandwich mit Käse</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="sa-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('sa-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Zucchini-Boote mit Hackfleisch">Zucchini-Boote mit Hackfleisch</option>
+
+                                    <option value="Putenschnitzel mit Salat">Putenschnitzel mit Salat</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="bg-white hover:bg-gray-50">
+
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Sonntag</td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="so-f" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('so-f', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Griechischer Joghurt mit Nüssen">Griechischer Joghurt mit Nüssen</option>
+
+                                    <option value="Rührei mit Spinat">Rührei mit Spinat</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="so-m" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('so-m', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Linsensuppe">Linsensuppe</option>
+
+                                    <option value="Hähnchensalat">Hähnchensalat</option>
+
+                                </select>
+
+                            </td>
+
+                            <td class="px-6 py-4 meal-cell">
+
+                                <input type="text" id="so-a" placeholder="Eigene Mahlzeit" class="meal-input">
+
+                                <select onchange="setMealFromRecipe('so-a', this.value)" class="recipe-select text-gray-500">
+
+                                    <option value="" disabled selected>Rezept wählen</option>
+
+                                    <option value="Rindersteak mit Brokkoli">Rindersteak mit Brokkoli</option>
+
+                                    <option value="Geflügel mit Gemüse">Geflügel mit Gemüse</option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div class="mt-4 text-center">
+
+                    <button id="save-plan-btn" class="bg-green-600 text-white font-medium px-6 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200">
+
+                        Plan speichern
+
+                    </button>
+
+                    <p id="save-message" class="text-sm mt-2 text-green-700 hidden">Plan gespeichert!</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script type="module">
+
+        // 1. Firebase SDKs importieren
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+
+
+        // 2. Firebase Konfiguration - HIER IST IHRE KONFIGURATION
+
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyDIRVIM3Ce11jTZFUzXtdNC6lGk-5E0fv4",
+
+            authDomain: "essenplaner-5f0ee.firebaseapp.com",
+
+            projectId: "essenplaner-5f0ee",
+
+            storageBucket: "essenplaner-5f0ee.firebasestorage.app",
+
+            messagingSenderId: "615454022576",
+
+            appId: "1:615454022576:web:6fefc951c86b5c5f3f1475",
+
+            measurementId: "G-P1HXCL0SZQ"
+
+        };
+
+
+
+        // 3. Firebase initialisieren
+
+        const app = initializeApp(firebaseConfig);
+
+        const db = getFirestore(app);
+
+        const userId = "mein-nutzer"; // Eindeutige ID für den Plan
+
+
+
+        // Funktion, um das ausgewählte Rezept in das Eingabefeld einzufügen
+
+        window.setMealFromRecipe = function(inputId, recipeName) {
+
+            document.getElementById(inputId).value = recipeName;
+
+        };
+
+
+
+        // 4. Funktion zum Speichern des Essensplans in Firestore
+
+        const saveMealPlan = async (plan) => {
+
+            try {
+
+                await setDoc(doc(db, "mealPlans", userId), plan);
+
+                console.log("Plan erfolgreich in Firestore gespeichert!");
+
+            } catch (e) {
+
+                console.error("Fehler beim Speichern des Plans:", e);
+
+            }
+
+        };
+
+
+
+        // 5. Funktion zum Laden des Essensplans aus Firestore
+
+        const loadMealPlan = async () => {
+
+            try {
+
+                const docRef = doc(db, "mealPlans", userId);
+
+                const docSnap = await getDoc(docRef);
+
+
+
+                if (docSnap.exists()) {
+
+                    const mealPlan = docSnap.data();
+
+                    console.log("Plan erfolgreich aus Firestore geladen:", mealPlan);
+
+                    const days = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
+
+                    const meals = ['f', 'm', 'a'];
+
+                    
+
+                    days.forEach(day => {
+
+                        meals.forEach(meal => {
+
+                            const id = `${day}-${meal}`;
+
+                            const value = mealPlan[day] ? mealPlan[day][meal] : '';
+
+                            if (value) {
+
+                                document.getElementById(id).value = value;
+
+                            }
+
+                        });
+
+                    });
+
+                } else {
+
+                    console.log("Kein gespeicherter Plan gefunden.");
+
+                }
+
+            } catch (e) {
+
+                console.error("Fehler beim Laden des Plans:", e);
+
+            }
+
+        };
+
+
+
+        // Event-Listener für den Speichern-Button
+
+        document.getElementById('save-plan-btn').addEventListener('click', () => {
+
+            const saveMessage = document.getElementById('save-message');
+
+            const mealPlan = {};
+
+            const days = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
+
+            const meals = ['f', 'm', 'a']; // f=Frühstück, m=Mittagessen, a=Abendessen
+
+            
+
+            days.forEach(day => {
+
+                mealPlan[day] = {};
+
+                meals.forEach(meal => {
+
+                    const id = `${day}-${meal}`;
+
+                    const value = document.getElementById(id).value;
+
+                    mealPlan[day][meal] = value;
+
+                });
+
+            });
+
+
+
+            saveMealPlan(mealPlan);
+
+
+
+            saveMessage.classList.remove('hidden');
+
+            setTimeout(() => {
+
+                saveMessage.classList.add('hidden');
+
+            }, 3000); // Nachricht nach 3 Sekunden ausblenden
+
+        });
+
+
+
+        // Lade den Plan, sobald die Seite vollständig geladen ist
+
+        document.addEventListener('DOMContentLoaded', loadMealPlan);
+
+    </script>
+
 </body>
+
 </html>
