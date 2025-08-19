@@ -7,130 +7,258 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
+        .recipe-dropdown {
+            max-height: 240px;
+            overflow-y: auto;
+        }
     </style>
+    <!-- Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
 </head>
 <body class="bg-gray-100 p-4 sm:p-8 flex items-center justify-center min-h-screen">
     <div class="w-full max-w-xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8">
         <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 text-center mb-4 sm:mb-6">Mein Wochen-Essensplan</h1>
         <p class="text-sm sm:text-base text-gray-600 text-center mb-6 sm:mb-10">
-            Tragen Sie für jeden Tag der Woche Ihre Mahlzeit ein.
+            Klicken Sie auf ein Feld, um Rezeptideen zu sehen. Ihre Eingaben werden automatisch gespeichert.
         </p>
 
         <div class="bg-green-50 p-4 sm:p-6 rounded-lg mb-8 shadow-sm">
             <h2 class="text-xl sm:text-2xl font-bold text-green-800 mb-4">Essensplan für die Woche</h2>
             
-            <div id="meal-plan-container" class="space-y-4">
-                <!-- Jeder Tag ist ein flexibles Element -->
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Montag</div>
-                    <input type="text" id="mo-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            <div id="meal-plan-container" class="space-y-6">
+                <!-- Montag -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Montag</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="mo-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="mo-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="mo-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Dienstag</div>
-                    <input type="text" id="di-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Mittwoch</div>
-                    <input type="text" id="mi-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Donnerstag</div>
-                    <input type="text" id="do-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Freitag</div>
-                    <input type="text" id="fr-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Samstag</div>
-                    <input type="text" id="sa-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-sm">
-                    <div class="font-medium text-gray-900 w-full sm:w-1/3">Sonntag</div>
-                    <input type="text" id="so-meal" placeholder="Bitte Gericht eintragen" class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-            </div>
 
-            <div class="mt-6 text-center">
-                <button id="save-plan-btn" class="bg-green-600 text-white font-medium px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                    Plan speichern
-                </button>
-                <p id="save-message" class="text-sm mt-2 text-green-700 hidden">Plan gespeichert!</p>
+                <!-- Dienstag -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Dienstag</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="di-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="di-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="di-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mittwoch -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Mittwoch</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="mi-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="mi-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="mi-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donnerstag -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Donnerstag</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="do-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="do-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="do-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Freitag -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Freitag</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="fr-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="fr-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="fr-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Samstag -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Samstag</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="sa-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="sa-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="sa-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sonntag -->
+                <div class="p-4 bg-white rounded-lg shadow-sm">
+                    <div class="font-medium text-gray-900 mb-2">Sonntag</div>
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <input type="text" id="so-fruehstueck" placeholder="Frühstück" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="so-mittagessen" placeholder="Mittagessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="so-abendessen" placeholder="Abendessen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <p id="status-message" class="text-sm mt-4 text-center text-gray-500"></p>
     </div>
 
     <script type="module">
-        // Globale Variablen für Firebase-Dienste
-        let app, db, auth;
-        let userId = 'mein-nutzer'; // Temporäre ID, wird später überschrieben
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Globale Variablen für Firebase und UI-Elemente
+        let app, db, auth;
+        const statusMessage = document.getElementById('status-message');
+        const inputs = document.querySelectorAll('input[type="text"]');
+        
         // Globale Variablen aus der Canvas-Umgebung
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        // Import der Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Rezeptideen basierend auf den Vorlieben des Benutzers
+        const sampleRecipes = {
+            'Frühstück': [
+                'Haferflocken mit Beeren',
+                'Rührei mit Spinat und Tomaten',
+                'Griechischer Joghurt mit Nüssen',
+                'Vollkornbrot mit fettarmem Frischkäse'
+            ],
+            'Mittagessen': [
+                'Hähnchenbrust mit Quinoa und Brokkoli',
+                'Linsensalat mit Feta-Käse',
+                'Chili sin Carne',
+                'Gemüse-Wraps mit Hummus'
+            ],
+            'Abendessen': [
+                'Gemüsesuppe mit Vollkornbrot',
+                'Großer Salat mit gebratenem Tofu',
+                'Omelett mit Gemüse',
+                'Frikadellen mit Blumenkohlpüree'
+            ]
+        };
 
-        // Initialisiert Firebase und lädt den Plan nach der Authentifizierung
-        const initFirebaseAndLoadPlan = async () => {
+        // UI-Statusmeldungen anzeigen
+        const setStatus = (message, color) => {
+            statusMessage.textContent = message;
+            statusMessage.style.color = color;
+        };
+
+        // Funktion zum Ausblenden aller Dropdown-Menüs
+        const hideAllDropdowns = () => {
+            document.querySelectorAll('.recipe-dropdown').forEach(dropdown => {
+                dropdown.remove();
+            });
+        };
+
+        /**
+         * Initialisiert Firebase und wartet auf Authentifizierung, um Daten zu laden.
+         */
+        const initFirebase = async () => {
+            setStatus('Lade gespeicherte Daten...', '#4A5568');
             try {
                 if (Object.keys(firebaseConfig).length > 0) {
                     app = initializeApp(firebaseConfig);
                     auth = getAuth(app);
                     db = getFirestore(app);
-
-                    // Melde den Benutzer mit dem benutzerdefinierten Token an oder anonym
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                        console.log("Erfolgreich mit benutzerdefiniertem Token angemeldet.");
-                    } else {
-                        await signInAnonymously(auth);
-                        console.log("Erfolgreich anonym angemeldet.");
-                    }
-
-                    // Warten auf den Authentifizierungsstatus
+                    
+                    // onAuthStateChanged stellt sicher, dass wir eine gültige Benutzer-ID haben
                     onAuthStateChanged(auth, async (user) => {
                         if (user) {
-                            userId = user.uid;
-                            console.log(`Benutzer-ID: ${userId}`);
-                            await loadMealPlan();
+                            await loadMealPlan(user.uid);
+                            setStatus('Daten geladen. Ihre Eingaben werden automatisch gespeichert.', '#4A5568');
                         } else {
-                            // Benutzer ist abgemeldet
-                            console.log("Kein Benutzer angemeldet. Anonyme ID wird verwendet.");
+                            setStatus('Daten konnten nicht geladen werden. Bitte melden Sie sich erneut an.', '#E53E3E');
                         }
                     });
+
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
                 } else {
-                    console.error("Firebase-Konfiguration nicht gefunden.");
+                    setStatus('Firebase-Konfiguration nicht gefunden. Speichern ist nicht möglich.', '#E53E3E');
                 }
             } catch (error) {
-                console.error("Fehler beim Initialisieren von Firebase oder Authentifizierung:", error);
+                console.error("Schwerwiegender Fehler beim Initialisieren von Firebase:", error);
+                setStatus('Fehler beim Initialisieren des Speicherdienstes.', '#E53E3E');
             }
         };
 
-        // Funktion zum Speichern des Essensplans in Firestore
-        const saveMealPlan = async (plan) => {
-            if (!db || !userId) {
-                console.error("Datenbank oder Benutzer-ID nicht verfügbar.");
+        /**
+         * Speichert den gesamten Essensplan in Firestore.
+         */
+        const saveMealPlan = async () => {
+            if (!db || !auth || !auth.currentUser) {
+                console.error("Datenbank oder Benutzer nicht verfügbar. Speicherung abgebrochen.");
                 return;
             }
+            const userId = auth.currentUser.uid;
             const collectionPath = `artifacts/${appId}/users/${userId}/mealPlans`;
+            const mealPlan = {};
+            inputs.forEach(input => {
+                mealPlan[input.id] = input.value;
+            });
+
+            setStatus('Speichert...', '#38A169');
             try {
-                // Speichert den Plan als ein Dokument
-                await setDoc(doc(db, collectionPath, 'current-plan'), plan);
-                console.log("Plan erfolgreich in Firestore gespeichert!");
+                await setDoc(doc(db, collectionPath, 'current-plan'), mealPlan);
+                setStatus('Gespeichert!', '#38A169');
             } catch (e) {
                 console.error("Fehler beim Speichern des Plans:", e);
+                setStatus('Speicherfehler!', '#E53E3E');
             }
         };
 
-        // Funktion zum Laden des Essensplans aus Firestore
-        const loadMealPlan = async () => {
+        /**
+         * Lädt den Essensplan aus Firestore.
+         */
+        const loadMealPlan = async (userId) => {
             if (!db || !userId) {
-                console.error("Datenbank oder Benutzer-ID nicht verfügbar.");
                 return;
             }
             const collectionPath = `artifacts/${appId}/users/${userId}/mealPlans`;
@@ -140,47 +268,84 @@
 
                 if (docSnap.exists()) {
                     const mealPlan = docSnap.data();
-                    console.log("Plan erfolgreich aus Firestore geladen:", mealPlan);
-                    const days = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
-                    
-                    days.forEach(day => {
-                        const id = `${day}-meal`;
-                        const value = mealPlan[day] || ''; 
-                        const inputElement = document.getElementById(id);
-                        if (inputElement) {
-                            inputElement.value = value;
+                    inputs.forEach(input => {
+                        if (mealPlan[input.id] !== undefined) {
+                            input.value = mealPlan[input.id];
                         }
                     });
-                } else {
-                    console.log("Kein gespeicherter Plan gefunden.");
                 }
             } catch (e) {
                 console.error("Fehler beim Laden des Plans:", e);
             }
         };
 
-        // Event-Listener für den Speichern-Button
-        document.getElementById('save-plan-btn').addEventListener('click', () => {
-            const saveMessage = document.getElementById('save-message');
-            const mealPlan = {};
-            const days = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
-            
-            days.forEach(day => {
-                const id = `${day}-meal`;
-                const value = document.getElementById(id).value;
-                mealPlan[day] = value;
+        // Event-Listener für Dropdown-Funktionalität und automatische Speicherung
+        inputs.forEach(input => {
+            // Dropdown-Funktionalität
+            input.addEventListener('focus', (event) => {
+                event.stopPropagation();
+                hideAllDropdowns();
+                
+                const mealType = input.placeholder;
+                const recipes = sampleRecipes[mealType];
+
+                if (recipes && recipes.length > 0) {
+                    const dropdown = document.createElement('ul');
+                    dropdown.classList.add(
+                        'recipe-dropdown', 
+                        'absolute', 
+                        'mt-2', 
+                        'w-full', 
+                        'bg-white', 
+                        'border', 
+                        'border-gray-300', 
+                        'rounded-lg', 
+                        'shadow-lg', 
+                        'z-10',
+                        'max-h-60',
+                        'overflow-y-auto'
+                    );
+                    
+                    recipes.forEach(recipe => {
+                        const li = document.createElement('li');
+                        li.textContent = recipe;
+                        li.classList.add(
+                            'px-4', 
+                            'py-2', 
+                            'cursor-pointer', 
+                            'hover:bg-green-100', 
+                            'transition-colors', 
+                            'duration-200'
+                        );
+                        
+                        li.addEventListener('click', () => {
+                            input.value = recipe;
+                            hideAllDropdowns();
+                            saveMealPlan();
+                        });
+                        
+                        dropdown.appendChild(li);
+                    });
+                    
+                    input.parentElement.appendChild(dropdown);
+                }
             });
 
-            saveMealPlan(mealPlan);
-
-            saveMessage.classList.remove('hidden');
-            setTimeout(() => {
-                saveMessage.classList.add('hidden');
-            }, 3000); 
+            // Automatische Speicherung bei Eingabe
+            input.addEventListener('input', () => {
+                saveMealPlan();
+            });
         });
 
-        // Initialisierung, sobald die Seite vollständig geladen ist
-        document.addEventListener('DOMContentLoaded', initFirebaseAndLoadPlan);
+        // Klick-Event-Listener zum Ausblenden des Dropdown-Menüs bei Klick außerhalb
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.recipe-dropdown') && !event.target.closest('input')) {
+                hideAllDropdowns();
+            }
+        });
+
+        // Initialisierung beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 </body>
 </html>
